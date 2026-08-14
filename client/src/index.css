@@ -57,7 +57,7 @@
   .tilt-card:hover { box-shadow:16px 20px 0 rgba(20,58,43,.07),0 24px 36px rgba(20,58,43,.12); }
   .quiz-paper { position:relative; background:#fffdf7; border:1px solid #cbd6c7; box-shadow:9px 10px 0 rgba(20,58,43,.07),0 24px 70px rgba(20,58,43,.1); }
   .quiz-paper::before { content:""; position:absolute; inset:10px; z-index:2; pointer-events:none; border:1px dashed rgba(161,115,32,.32); }
-  .timeline-viewport { overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:thin; scrollbar-color:#d9a441 rgba(255,255,255,.12); }
+  .timeline-viewport { overflow-x:auto; overscroll-behavior-x:contain; scroll-behavior:smooth; scroll-snap-type:x mandatory; scrollbar-width:thin; scrollbar-color:#d9a441 rgba(255,255,255,.12); -webkit-overflow-scrolling:touch; touch-action:pan-x; }
   .timeline-rail { display:flex; gap:1.25rem; min-width:max-content; padding:1.5rem .4rem 2rem; }
   .timeline-card { width:300px; height:330px; flex:0 0 300px; perspective:1000px; text-align:left; scroll-snap-align:center; }
   .timeline-flip-inner { position:relative; display:block; width:100%; height:100%; transform-style:preserve-3d; transition:transform .65s cubic-bezier(.23,1,.32,1); }
@@ -72,6 +72,9 @@
   .timeline-rotate-hint { position:relative; margin-top:auto; color:rgba(255,255,255,.45); font-size:.65rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
   .timeline-nav { display:grid; place-items:center; width:42px; height:42px; border:1px solid rgba(255,255,255,.35); border-radius:50%; color:#fff; transition:background-color .2s,transform .2s; }
   .timeline-nav:hover { background:#0b6b4a; transform:translateY(-2px); }
+  .timeline-dots { display:flex; justify-content:center; align-items:center; gap:.45rem; margin-top:.2rem; }
+  .timeline-dots button { width:7px; height:7px; padding:0; border:1px solid rgba(247,217,137,.75); border-radius:50%; background:transparent; transition:transform .2s,background-color .2s; }
+  .timeline-dots button.is-active { background:#d9a441; transform:scale(1.35); }
   .timeline-card:nth-child(even) { transform:translateY(16px) rotate(.6deg); }
   .timeline-card:nth-child(odd) { transform:rotate(-.5deg); }
   .timeline-card:hover { transform:translateY(-4px) rotate(0deg); }
@@ -108,6 +111,7 @@
 @keyframes confetti-fall { 0% { opacity:0; transform:translateY(-10px) rotate(0); } 10% { opacity:1; } 100% { opacity:0; transform:translateY(330px) rotate(520deg); } }
 @keyframes burst-core { 0% { opacity:.2; transform:scale(.4); } 16% { opacity:1; transform:scale(1.5); } 100% { opacity:0; transform:scale(.1); } }
 @keyframes burst-ray { 0% { opacity:0; height:10px; } 16% { opacity:1; height:38px; } 100% { opacity:0; height:125px; } }
+@media (max-width:639px) { .timeline-viewport { margin-inline:-.25rem; padding-inline:0; scrollbar-width:none; } .timeline-viewport::-webkit-scrollbar { display:none; } .timeline-rail { gap:.8rem; padding-inline:max(.75rem,calc((100% - min(320px,calc(100vw - 3rem))) / 2)); } .timeline-card { width:min(320px,calc(100vw - 3rem)); flex-basis:min(320px,calc(100vw - 3rem)); height:310px; transform:none!important; } .timeline-face { padding:1.25rem; } .timeline-year { max-width:100%; font-size:clamp(2.55rem,12vw,3.35rem); letter-spacing:-.06em; overflow-wrap:anywhere; } .timeline-label { max-width:92%; font-size:.58rem; line-height:1.35; } .timeline-face strong { max-width:100%; font-size:1.8rem; overflow-wrap:anywhere; } .timeline-rotate-hint { font-size:.58rem; } .timeline-orbit { right:.8rem; top:.8rem; width:44px; height:44px; font-size:.9rem; } .timeline-heading { margin-bottom:1.25rem; } .timeline-controls { width:100%; justify-content:space-between; } .timeline-controls .section-seal { width:54px; height:54px; } .timeline-dots { margin-top:.35rem; } }
 @media (min-width:640px) { .container { padding-inline:1.5rem; } .timeline-card { width:340px; flex-basis:340px; } }
 @media (min-width:1024px) { .container { max-width:1280px; padding-inline:2rem; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; transition-duration:.01ms!important; } .reveal { opacity:1; transform:none; } .floating-celebration { display:none; } .parallax-layer { transform:none!important; } .tilt-card { transform:none!important; } }

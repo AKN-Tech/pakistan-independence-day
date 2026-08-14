@@ -12,3 +12,5 @@
 - [x] Add the five-click flag/moon easter egg with sound and surprise fireworks.
 - [x] Validate the new interactions across desktop and mobile.
 - [x] Validate mobile layout, type safety, and motion performance.
+- [x] Fix mobile carousel card centering, sizing, swipe behavior, and control placement.
+- [x] Verify the complete page remains responsive after the carousel fix.
