@@ -1,25 +1,103 @@
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
+/* Paper Parade page reminder: editorial celebration poster energy, emerald/ivory/gold, asymmetric procession, tactile layers, motion as applause. */
+import { useEffect, useRef, useState } from "react";
+import { ArrowDown, ArrowRight, Check, Download, Flag, Heart, Instagram, Menu, Share2, Sparkles, Star, Trophy, X } from "lucide-react";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Best Practices, Design Guide and Common Pitfalls
- */
-export default function Home() {
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
+const heroImage = "/manus-storage/pakistan-azadi-hero_295b1f12.png";
+const markImage = "/manus-storage/pakistan-azadi-mark_4af938b8.png";
+const fireworksImage = "/manus-storage/pakistan-celebration-fireworks_550f6789.png";
+const minarImage = "/manus-storage/pakistan-minar-sticker_f4283051.png";
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
+const facts = [
+  { no: "01", title: "A landmark built on a nation’s first heartbeat", body: "Minar-e-Pakistan in Lahore marks the spot where the historic Lahore Resolution was passed in 1940. Its form blends Mughal, Islamic, and modern design." },
+  { no: "02", title: "Our anthem arrives in three minutes", body: "The national anthem, Qaumi Taranah, is written in highly Persianised Urdu and is officially timed at roughly 3 minutes and 15 seconds." },
+  { no: "03", title: "Every color on the flag has a story", body: "Green represents the Muslim majority, white honours religious minorities, the crescent signals progress, and the star stands for light and knowledge." },
+  { no: "04", title: "14 August is the big day", body: "Pakistan became an independent nation on 14 August 1947. The first Independence Day was celebrated the very next morning with prayers and ceremonies." },
+  { no: "05", title: "The founder was a master of resolve", body: "Quaid-e-Azam Muhammad Ali Jinnah led the movement with a clear constitutional vision, famously summing up his principle as unity, faith, and discipline." },
+];
+
+const quiz = [
+  { question: "Which city is home to Minar-e-Pakistan?", options: ["Karachi", "Lahore", "Islamabad", "Peshawar"], answer: 1 },
+  { question: "When is Pakistan’s Independence Day celebrated?", options: ["23 March", "6 September", "14 August", "25 December"], answer: 2 },
+  { question: "What does the white stripe on the flag represent?", options: ["Rivers", "Minority communities", "Snowy peaks", "The future"], answer: 1 },
+  { question: "Who is known as Quaid-e-Azam?", options: ["Allama Iqbal", "Liaquat Ali Khan", "Abdul Sattar Edhi", "Muhammad Ali Jinnah"], answer: 3 },
+  { question: "What shape is at the heart of Pakistan’s flag?", options: ["A crescent and star", "A sun and moon", "A mountain", "A kite"], answer: 0 },
+];
+
+function ConfettiBurst({ active }: { active: boolean }) {
+  if (!active) return null;
+  return <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden" aria-hidden="true">{Array.from({ length: 34 }).map((_, i) => <i key={i} className="confetti-piece" style={{ left: `${(i * 29) % 100}%`, ['--delay' as string]: `${(i % 7) * 0.04}s`, ['--color' as string]: i % 3 === 0 ? '#d9a441' : i % 2 === 0 ? '#fffdf7' : '#0b6b4a', ['--rotation' as string]: `${i * 23}deg` }} />)}</div>;
+}
+
+function PakistanFlag() {
+  return <div className="relative mx-auto h-[220px] w-[360px] max-w-[88vw] sm:h-[280px] sm:w-[470px]" aria-label="Animated Pakistan flag">
+    <div className="absolute left-2 top-0 h-full w-[10px] rounded-full bg-[#e5d5ad] shadow-[3px_3px_0_rgba(0,0,0,.1)]" />
+    <div className="flag-cloth absolute left-10 top-4 h-[185px] w-[300px] overflow-hidden rounded-r-[18px] border-y-4 border-white/35 bg-[#0b6b4a] shadow-[18px_20px_30px_rgba(0,0,0,.22)] sm:h-[236px] sm:w-[400px]">
+      <div className="absolute left-0 top-0 h-full w-[25%] bg-[#fffdf7]" />
+      <div className="absolute left-[45%] top-[24%] h-[78px] w-[78px] rounded-full bg-[#fffdf7] sm:h-[100px] sm:w-[100px]" />
+      <div className="absolute left-[51%] top-[18%] h-[78px] w-[78px] rounded-full bg-[#0b6b4a] sm:h-[100px] sm:w-[100px]" />
+      <div className="absolute left-[68%] top-[25%] h-0 w-0 border-b-[28px] border-l-[9px] border-r-[9px] border-b-[#fffdf7] border-l-transparent border-r-transparent sm:border-b-[34px]" />
+      <div className="absolute bottom-5 right-8 h-2 w-12 rounded-full bg-white/10" />
     </div>
-  );
+    <div className="absolute -bottom-2 left-10 h-5 w-[310px] rounded-[50%] bg-[#0a3f2d]/30 blur-md sm:w-[410px]" />
+  </div>;
+}
+
+function SectionTitle({ kicker, title, note }: { kicker: string; title: string; note?: string }) {
+  return <div className="relative z-10 max-w-xl"><p className="section-kicker mb-4">{kicker}</p><h2 className="azadi-display text-4xl leading-[.98] text-[#12382b] sm:text-6xl">{title}</h2>{note && <p className="mt-5 max-w-md text-base leading-7 text-[#607168]">{note}</p>}</div>;
+}
+
+export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [visibleFacts, setVisibleFacts] = useState<number[]>([]);
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [quizDone, setQuizDone] = useState(false);
+  const [name, setName] = useState("");
+  const [wish, setWish] = useState("");
+  const [celebrate, setCelebrate] = useState(false);
+  const [wishPulse, setWishPulse] = useState(false);
+  const factsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { const index = Number((entry.target as HTMLElement).dataset.index); setVisibleFacts((current) => current.includes(index) ? current : [...current, index]); } }), { threshold: 0.2 });
+    factsRef.current?.querySelectorAll("[data-index]").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const answerQuiz = (option: number) => {
+    if (selected !== null) return;
+    setSelected(option);
+    const nextScore = score + (option === quiz[quizIndex].answer ? 1 : 0);
+    setScore(nextScore);
+    setTimeout(() => { if (quizIndex === quiz.length - 1) { setQuizDone(true); setCelebrate(true); setTimeout(() => setCelebrate(false), 1900); } else { setQuizIndex((current) => current + 1); setSelected(null); } }, 620);
+  };
+
+  const createWish = () => { const trimmed = name.trim(); if (!trimmed) return; setWish(`Happy Independence Day from ${trimmed}!`); setWishPulse(true); setCelebrate(true); setTimeout(() => { setWishPulse(false); setCelebrate(false); }, 1900); };
+
+  const downloadWish = () => {
+    if (!wish) return;
+    const canvas = document.createElement("canvas"); canvas.width = 1200; canvas.height = 720;
+    const ctx = canvas.getContext("2d"); if (!ctx) return;
+    const gradient = ctx.createLinearGradient(0, 0, 1200, 720); gradient.addColorStop(0, "#0b6b4a"); gradient.addColorStop(1, "#06422f"); ctx.fillStyle = gradient; ctx.fillRect(0, 0, 1200, 720);
+    ctx.fillStyle = "#d9a441"; for (let i = 0; i < 26; i++) { ctx.fillRect((i * 79) % 1200, 50 + ((i * 113) % 600), 8, 16); }
+    ctx.fillStyle = "#fffdf7"; ctx.font = "700 34px DM Sans"; ctx.fillText("14 AUGUST · PAKISTAN", 92, 110); ctx.font = "800 78px Fraunces"; ctx.fillText(wish, 92, 330); ctx.font = "400 28px DM Sans"; ctx.fillText("A little louder for the land we love.", 96, 405); ctx.fillStyle = "#d9a441"; ctx.fillRect(96, 470, 250, 4); const link = document.createElement("a"); link.download = "my-azadi-wish.png"; link.href = canvas.toDataURL("image/png"); link.click();
+  };
+
+  return <div className="min-h-screen bg-[#f8f5ec] text-[#17382b] selection:bg-[#d9a441] selection:text-[#12382b]">
+    <ConfettiBurst active={celebrate} />
+    <header className="absolute left-0 right-0 top-0 z-30"><div className="container flex items-center justify-between py-5"><a href="#top" className="flex items-center gap-3"><img src={markImage} alt="Azadi crescent and star" className="h-11 w-11 object-contain" /><span className="azadi-stamp flex flex-col leading-none text-white"><strong>14 AUG</strong><small>AZADI · 78</small></span></a><nav className={`${menuOpen ? "flex" : "hidden"} absolute left-4 right-4 top-[78px] flex-col gap-5 rounded-2xl bg-[#fffdf7] p-5 text-sm font-bold text-[#12382b] shadow-xl md:static md:flex md:flex-row md:items-center md:gap-7 md:bg-transparent md:p-0 md:text-white md:shadow-none`}><a href="#facts" onClick={() => setMenuOpen(false)}>Did you know?</a><a href="#quiz" onClick={() => setMenuOpen(false)}>Take the quiz</a><a href="#wishes" onClick={() => setMenuOpen(false)}>Send wishes</a></nav><button className="rounded-full border border-white/40 p-2 text-white md:hidden" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle navigation">{menuOpen ? <X size={18} /> : <Menu size={18} />}</button></div></header>
+
+    <main id="top">
+      <section className="relative isolate overflow-hidden bg-[#06422f] text-white"><div className="absolute inset-0 bg-cover bg-center opacity-50 mix-blend-screen" style={{ backgroundImage: `url(${heroImage})` }} /><div className="absolute inset-0 bg-[linear-gradient(110deg,#06422f_5%,rgba(6,66,47,.82)_43%,rgba(6,66,47,.18)_100%)]" /><div className="absolute -right-24 top-32 h-80 w-80 rounded-full bg-[#d9a441]/20 blur-3xl" /><div className="azadi-ribbon absolute right-[-64px] top-[170px] hidden rotate-[24deg] px-14 py-2 text-xs font-bold uppercase tracking-[.24em] text-[#17382b] lg:block">14 August · Pakistan</div><div className="container relative flex min-h-[760px] items-center pb-20 pt-32 sm:min-h-[820px]"><div className="grid w-full items-center gap-14 lg:grid-cols-[1.05fr_.95fr]"><div className="max-w-2xl"><div className="mb-7 inline-flex items-center gap-3 rounded-full border border-[#d9a441]/60 bg-[#d9a441]/10 px-4 py-2 text-xs font-bold uppercase tracking-[.18em] text-[#f8d989]"><Sparkles size={14} /> A digital celebration from Pakistan</div><h1 className="azadi-display max-w-3xl text-[4.4rem] leading-[.88] sm:text-[7.3rem]">Happy<br /><span className="text-[#d9a441]">Independence</span><br />Day<span className="text-[#d9a441]">.</span></h1><p className="mt-8 max-w-md text-lg leading-8 text-white/75">For the land of rivers, mountains, mangoes, music, and millions of hopeful hearts.</p><div className="mt-10 flex flex-wrap items-center gap-4"><a href="#quiz" className="group inline-flex items-center gap-3 rounded-full bg-[#d9a441] px-6 py-3.5 text-sm font-bold text-[#17382b] transition hover:-translate-y-1 hover:bg-[#f0c66c]">Test your Pakistan knowledge <ArrowRight size={17} className="transition group-hover:translate-x-1" /></a><span className="text-sm font-semibold text-white/60">14 August 1947 <span className="mx-2 text-[#d9a441]">·</span> 78 years of Azadi</span></div></div><div className="relative flex min-h-[280px] items-center justify-center lg:min-h-[430px]"><div className="absolute right-0 top-0 hidden items-center gap-2 text-xs uppercase tracking-[.2em] text-white/50 sm:flex"><span className="h-px w-12 bg-[#d9a441]" /> Let it wave</div><PakistanFlag /><div className="float-slow absolute -bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-2xl border border-white/20 bg-[#12382b]/75 px-4 py-3 backdrop-blur-md"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#d9a441] text-[#17382b]"><Flag size={17} /></span><span><strong className="block text-sm">78 years</strong><small className="text-xs text-white/60">of courage & togetherness</small></span></div></div></div></div><div className="absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-white/50"><span>Scroll to celebrate</span><ArrowDown size={16} className="animate-bounce text-[#d9a441]" /></div></section>
+
+      <section id="facts" className="relative overflow-hidden py-28 sm:py-36"><div className="absolute -right-20 top-20 h-60 w-60 rounded-full border-[32px] border-[#e0eadf] opacity-60" /><div className="container relative"><div className="grid gap-16 lg:grid-cols-[.75fr_1.25fr]"><div><SectionTitle kicker="Little sparks of pride" title="Did you know?" note="Five tiny stories that make the big picture of Pakistan even brighter. Scroll slowly — they reveal themselves as you go." /><img src={minarImage} alt="Illustrated Minar-e-Pakistan sticker" className="float-slow mt-10 h-44 w-44 object-contain sm:h-56 sm:w-56" /></div><div ref={factsRef} className="relative space-y-5 lg:pt-8">{facts.map((fact, index) => <article key={fact.no} data-index={index} className={`paper-note reveal ${visibleFacts.includes(index) ? "is-visible" : ""} group relative overflow-hidden p-6 transition hover:-translate-y-1 hover:border-[#d9a441] sm:p-8`} style={{ transitionDelay: `${index * 70}ms` }}><span className="note-stamp">FACT {fact.no}</span><div className="flex gap-5"><span className="azadi-display text-3xl text-[#d9a441]">{fact.no}</span><div className="flex-1"><h3 className="azadi-display text-2xl leading-tight text-[#12382b]">{fact.title}</h3><p className="mt-3 max-w-xl text-sm leading-6 text-[#607168]">{fact.body}</p></div><Star className="sparkle hidden text-[#d9a441] sm:block" size={20} /></div><div className="absolute bottom-0 left-0 h-1 w-0 bg-[#d9a441] transition-all duration-500 group-hover:w-full" /></article>)}</div></div></div></section>
+
+      <section id="quiz" className="relative overflow-hidden bg-[#e8f0e7] py-28 sm:py-36"><div className="absolute -left-20 top-24 h-52 w-52 rounded-full border-[26px] border-white/80" /><div className="azadi-ribbon absolute left-[-62px] top-[235px] hidden -rotate-[28deg] px-12 py-2 text-xs font-bold uppercase tracking-[.2em] text-[#17382b] lg:block">Quiz · 05 questions</div><div className="container relative"><div className="mb-12 flex flex-col justify-between gap-6 sm:flex-row sm:items-end"><SectionTitle kicker="Your turn at the mic" title="How well do you know Pakistan?" note="Five questions. No pressure. Just a little friendly national pride." /><div className="hidden text-right sm:block"><p className="text-5xl font-bold text-[#0b6b4a]">0{quizDone ? score : quizIndex + 1}<span className="text-xl text-[#9aab9f]"> / 05</span></p><p className="text-xs font-bold uppercase tracking-[.16em] text-[#607168]">round progress</p></div></div><div className="quiz-paper grid overflow-hidden lg:grid-cols-[.8fr_1.2fr]"><div className="relative min-h-[270px] overflow-hidden bg-[#0b6b4a] p-8 text-white sm:p-12"><img src={fireworksImage} alt="Festive fireworks illustration" className="absolute inset-0 h-full w-full object-cover opacity-30 mix-blend-screen" /><div className="relative flex h-full flex-col justify-between"><div><Trophy className="mb-7 text-[#d9a441]" size={33} /><p className="max-w-xs text-2xl font-semibold leading-snug">A good citizen is always curious.</p></div><p className="text-sm leading-6 text-white/60">Pick an answer to reveal the next question. Your score is just for fun — your enthusiasm counts double.</p></div></div><div className="p-7 sm:p-12">{quizDone ? <div className="flex min-h-[300px] flex-col items-start justify-center"><div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#f7ead0] text-[#a17320]"><Sparkles size={25} /></div><p className="section-kicker">Quiz complete</p><h3 className="azadi-display mt-3 text-5xl text-[#12382b]">{score === 5 ? "Full marks, superstar." : score >= 3 ? "Solid Azadi energy." : "Keep the flag flying."}</h3><p className="mt-4 max-w-md text-sm leading-6 text-[#607168]">You got <strong className="text-[#0b6b4a]">{score} out of 5</strong>. Share the quiz with someone who thinks they know every Pakistan fact.</p><button className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#0b6b4a] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#06422f]" onClick={() => { setQuizIndex(0); setScore(0); setSelected(null); setQuizDone(false); }}>Play again <ArrowRight size={16} /></button></div> : <div><div className="mb-7 flex items-center justify-between"><span className="rounded-full bg-[#e8f0e7] px-3 py-1 text-xs font-bold text-[#0b6b4a]">Question {quizIndex + 1} of {quiz.length}</span><span className="text-xs font-semibold text-[#9aab9f]">{score} correct so far</span></div><h3 className="azadi-display max-w-xl text-3xl leading-tight text-[#12382b] sm:text-4xl">{quiz[quizIndex].question}</h3><div className="mt-8 grid gap-3">{quiz[quizIndex].options.map((option, optionIndex) => { const isCorrect = selected !== null && optionIndex === quiz[quizIndex].answer; const isWrong = selected === optionIndex && !isCorrect; return <button key={option} onClick={() => answerQuiz(optionIndex)} className={`quiz-option flex items-center justify-between rounded-xl border p-4 text-left text-sm font-semibold ${isCorrect ? "border-[#0b6b4a] bg-[#e8f0e7] text-[#0b6b4a]" : isWrong ? "border-[#b54337] bg-[#fff0ee] text-[#b54337]" : "border-[#d8ddcf] text-[#607168] hover:border-[#0b6b4a] hover:bg-[#f6faf4]"}`}><span>{option}</span>{isCorrect ? <Check size={18} /> : isWrong ? <X size={18} /> : <span className="h-2 w-2 rounded-full bg-[#d9a441] opacity-70" />}</button>; })}</div></div>}</div></div></div></section>
+
+      <section id="wishes" className="relative overflow-hidden py-28 sm:py-36"><div className="container relative"><div className="grid gap-14 lg:grid-cols-[.8fr_1.2fr] lg:items-center"><SectionTitle kicker="Put your name on it" title="Send a little Azadi joy." note="Make a shareable greeting card for your people. Type your name, press the button, and let the confetti do the rest." /><div className="paper-panel rounded-[2rem] border border-[#d8ddcf] p-5 sm:p-8"><div className={`wish-card relative min-h-[390px] overflow-hidden rounded-[1.4rem] p-7 text-white transition sm:p-10 ${wishPulse ? "ring-4 ring-[#d9a441]/50" : ""}`}><div className="absolute -right-10 -top-14 h-48 w-48 rounded-full border-[22px] border-white/10" /><div className="absolute bottom-5 right-5 opacity-20"><img src={markImage} alt="" className="h-40 w-40 object-contain" /></div><div className="relative flex h-full min-h-[330px] flex-col justify-between"><div className="flex items-start justify-between"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#f7d989]">14 August</p><p className="mt-2 text-sm text-white/60">Pakistan Independence Day</p></div><Heart className="text-[#d9a441]" size={22} fill="currentColor" /></div><div><h3 className="azadi-display max-w-lg text-4xl leading-[.98] sm:text-6xl">{wish || "Happy Independence Day!"}</h3><p className="mt-5 max-w-sm text-sm leading-6 text-white/65">A little louder for the land we love.</p></div><div className="flex flex-wrap gap-3"><button onClick={downloadWish} disabled={!wish} className="inline-flex items-center gap-2 rounded-full bg-[#fffdf7] px-4 py-2.5 text-xs font-bold text-[#0b6b4a] transition hover:-translate-y-1 disabled:cursor-not-allowed disabled:opacity-40"><Download size={15} /> Download card</button><button onClick={async () => { if (wish && navigator.share) await navigator.share({ title: "My Azadi wish", text: wish }); }} disabled={!wish || !navigator.share} className="inline-flex items-center gap-2 rounded-full border border-white/30 px-4 py-2.5 text-xs font-bold text-white transition hover:-translate-y-1 disabled:cursor-not-allowed disabled:opacity-40"><Share2 size={15} /> Share</button></div></div></div><div className="mt-7 flex flex-col gap-3 sm:flex-row"><input value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => event.key === "Enter" && createWish()} placeholder="Your name" aria-label="Your name" className="h-12 flex-1 rounded-full border border-[#cbd6c7] bg-[#f8f5ec] px-5 text-sm font-semibold text-[#17382b] outline-none transition placeholder:text-[#9aab9f] focus:border-[#0b6b4a] focus:ring-4 focus:ring-[#0b6b4a]/10" /><button onClick={createWish} className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#d9a441] px-6 text-sm font-bold text-[#17382b] transition hover:-translate-y-1 hover:bg-[#efc76c]">Make my wish <Sparkles size={16} /></button></div></div></div></div></section>
+    </main>
+
+    <footer className="relative overflow-hidden bg-[#12382b] py-14 text-white"><div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#0b6b4a] via-[#d9a441] to-[#fffdf7]" /><div className="container relative flex flex-col justify-between gap-10 sm:flex-row sm:items-end"><div><div className="flex items-center gap-3"><img src={markImage} alt="Azadi crescent and star" className="h-11 w-11 object-contain" /><span className="azadi-display text-3xl">Pakistan, always.</span></div><p className="mt-5 max-w-sm text-sm leading-6 text-white/55">A tiny corner of the internet for a very big feeling. Celebrate loudly, remember kindly.</p></div><div className="max-w-sm border-l border-white/20 pl-5"><p className="section-kicker text-[#f7d989]">A line to carry with you</p><blockquote className="azadi-display mt-3 text-2xl leading-tight text-white/90">“Unity, Faith, Discipline.”</blockquote><p className="mt-2 text-xs font-semibold text-white/50">— Quaid-e-Azam Muhammad Ali Jinnah</p></div></div><div className="container mt-12 flex flex-col justify-between gap-3 border-t border-white/10 pt-5 text-xs text-white/40 sm:flex-row"><span>Made for 14 August · 78 years of Azadi</span><span className="inline-flex items-center gap-2">With pride <Heart size={13} className="text-[#d9a441]" fill="currentColor" /></span></div></footer>
+  </div>;
 }
