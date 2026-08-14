@@ -1,14 +1,8 @@
-# Enhancement checklist
+# Pakistan: The Journey checklist
 
-- [x] Add a CSS 3D animated Pakistan flag with reduced-motion fallback.
-- [x] Add hover/scroll 3D tilt to facts and quiz cards.
-- [x] Add performant parallax layers and floating celebration particles.
-- [x] Add a horizontal 3D “Pakistan Through the Years” timeline carousel.
-- [x] Add a lightweight optional celebratory sound toggle using Web Audio.
-- [x] Add full-screen quiz and wish celebration bursts plus ambient automatic fireworks.
-- [x] Add the Tap the Fireworks mini-game and animated celebration counter.
-- [x] Add personalized Independence Day certificate image download after quiz completion.
-- [x] Add Flag Color Mood theme switching.
-- [x] Add the five-click flag/moon easter egg with sound and surprise fireworks.
-- [ ] Validate the new interactions across desktop and mobile.
-- [ ] Validate mobile layout, type safety, and motion performance.
+- [ ] Research and verify the historical chapter content and 2026 framing.
+- [ ] Initialize a dedicated Pakistan: The Journey website project.
+- [ ] Create the cinematic visual system and chapter-by-chapter content structure.
+- [ ] Add scroll-triggered reveals, parallax layers, and fixed progress navigation.
+- [ ] Build responsive chapter transitions and the hopeful final call to action.
+- [ ] Validate historical copy, accessibility, mobile behavior, and performance.
