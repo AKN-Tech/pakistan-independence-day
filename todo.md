@@ -10,5 +10,5 @@
 - [x] Add personalized Independence Day certificate image download after quiz completion.
 - [x] Add Flag Color Mood theme switching.
 - [x] Add the five-click flag/moon easter egg with sound and surprise fireworks.
-- [ ] Validate the new interactions across desktop and mobile.
-- [ ] Validate mobile layout, type safety, and motion performance.
+- [x] Validate the new interactions across desktop and mobile.
+- [x] Validate mobile layout, type safety, and motion performance.
